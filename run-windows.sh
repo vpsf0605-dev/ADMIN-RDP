@@ -1,16 +1,13 @@
-FROM ubuntu:22.04
+#!/bin/bash
 
-# Cài QEMU và các tiện ích
-RUN apt-get update && apt-get install -y \
-    qemu-system-x86 qemu-utils wget unzip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Tạo thư mục Windows
-RUN mkdir /windows
-
-# Copy script và Autounattend
-COPY run-windows.sh /run-windows.sh
-COPY Autounattend.xml /Autounattend.xml
-RUN chmod +x /run-windows.sh
-
-CMD ["/run-windows.sh"]
+qemu-system-x86_64 \
+    -m 8G \                   # RAM 8GB
+    -smp 4 \                   # 4 CPU cores
+    -cpu host \
+    -enable-kvm \
+    -hda /windows/Win11.qcow2 \
+    -cdrom /windows/Win11.iso \
+    -boot d \
+    -vga virtio \
+    -net nic -net user,hostfwd=tcp::3389-:3389 \
+    -fda /Autounattend.xml
