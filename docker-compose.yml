@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  windows11:
+    build: .
+    container_name: windows11_vm
+    privileged: true           # cần để QEMU dùng KVM
+    volumes:
+      - ./windows:/windows
+      - ./Autounattend.xml:/Autounattend.xml
+    ports:
+      - "8006:3389"            # RDP port map
+    shm_size: '8gb'
+    restart: unless-stopped
+    command: ["/run-windows.sh"]
